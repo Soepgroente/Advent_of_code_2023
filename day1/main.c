@@ -1,10 +1,4 @@
-#include <stdlib.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <ctype.h>
-#include <string.h>
-
-char	**ft_split(const char *s, char c);
+#include "day1.h"
 
 int	compare_input(char* input)
 {

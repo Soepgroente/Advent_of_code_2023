@@ -1,8 +1,4 @@
-#include <stdlib.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <ctype.h>
-#include <string.h>
+#include "day1.h"
 
 static int	ft_getamount(const char *s, char c)
 {
