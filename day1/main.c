@@ -4,6 +4,8 @@
 #include <ctype.h>
 #include <string.h>
 
+char	**ft_split(const char *s, char c);
+
 int	compare_input(char* input)
 {
 	char c = *input;
@@ -45,12 +47,23 @@ int	convert_str_to_int(char* input)
 	return (res);
 }
 
-int main(int argc, char** argv)
+int main(void)
 {
-	int result = 0;
+	FILE* 	file;
+	char* 	tmp;
+	char**	input;
+	int 	size;
+	int 	result = 0;
 
-	(void)argc;
-	for (int i = 1; argv[i] != NULL; i++)
-		result += convert_str_to_int(argv[i]);
+	file = fopen("input.txt", "r");
+	fseek(file, 0, SEEK_END);
+	size = ftell(file);
+	rewind(file);
+	tmp = calloc((size + 1), sizeof(char));
+	fread(tmp, sizeof(char), size, file);
+	input = ft_split(tmp, '\n');
+	for (int i = 0; input[i] != NULL; i++)
+		result += convert_str_to_int(input[i]);
 	printf("Result: %d\n", result);
+	fclose(file);
 }
