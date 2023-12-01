@@ -49,7 +49,7 @@ int main(void)
 	int 	size;
 	int 	result = 0;
 
-	file = fopen("input.txt", "r");
+	file = fopen("julinput.txt", "r");
 	fseek(file, 0, SEEK_END);
 	size = ftell(file);
 	rewind(file);
