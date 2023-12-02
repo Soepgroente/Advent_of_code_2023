@@ -8,7 +8,6 @@ static int	find_color(char* str)
 		return (GREEN);
 	if (*str == 'b')
 		return (BLUE);
-	exit(EXIT_FAILURE);
 }
 
 static int	convert_number(char** str)
@@ -21,28 +20,27 @@ static int	convert_number(char** str)
 		res += (**str - '0');
 		(*str)++;
 	}
-	printf("res: %d\n", res);
 	return (res);
 }
 
-static int	game_x(char* input, int red, int green, int blue)
+static void	game_x(char* input, int* red, int* green, int* blue)
 {
-	int tmp = INT_MAX;
+	int tmp = 0;
 
 	while (*input != '\0' && isdigit(*input) == false)
 		input++;
 	if (*input == '\0')
-		return (red * green * blue);
+		return ;
 	tmp = convert_number(&input);
 	input++;
-	if (find_color(input) == RED && tmp < red)
-		red = tmp;
-	else if (find_color(input) == GREEN && tmp < green)
-		green = tmp;
-	else if (find_color(input) == BLUE && tmp < blue)
-		blue = tmp;
+	if (find_color(input) == RED && tmp > *red)
+		*red = tmp;
+	else if (find_color(input) == GREEN && tmp > *green)
+		*green = tmp;
+	else if (find_color(input) == BLUE && tmp > *blue)
+		*blue = tmp;
 	game_x(input, red, green, blue);
-	exit(EXIT_FAILURE);
+	return ;
 }
 
 int main(void)
@@ -52,6 +50,7 @@ int main(void)
 	char**	input;
 	int 	size;
 	uint64_t	result = 0;
+	int red, green, blue;
 
 	file = fopen("input.txt", "r");
 	fseek(file, 0, SEEK_END);
@@ -67,10 +66,12 @@ int main(void)
 
 	while (*input != NULL)
 	{
+		red = 0; green = 0; blue = 0;
 		while (**input != ':')
 			(*input)++;
 		(*input) += 2;
-		result += game_x(*input, 0, 0, 0);
+		game_x(*input, &red, &green, &blue);
+		result += red * green * blue;
 		input++;
 	}
 
