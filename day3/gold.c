@@ -64,10 +64,7 @@ static uint64_t	add_up_gears(char** input)
 		while (input[i][j] != '\0')
 		{
 			if (input[i][j] == '*')
-			{
-				// printf("gear product: %lld\n", gear_product(input, i, j));
 				total += gear_product(input, i, j);
-			}
 			j++;
 		}
 		i++;
