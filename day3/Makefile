@@ -1,38 +1,29 @@
-NAME	= silver_day3
-NAME2	= gold_day3
+NAME	= day3
 RM		= rm -rf
-CC		= cc
+CC		= gcc
 CFLAGS	= -Wall -Werror -Wextra
+#CFLAGS += -g3 -fsanitize=address
 
-SRCS	= ft_split.c
+SRCS	=	main.c \
+			ft_split.c \
+			gold.c \
+			silver.c \
+
 OBJS	= $(SRCS:%.c=%.o)
 
-S_SRCS	= silver.c
-S_OBJS	= $(S_SRCS:%.c=%.o)
-
-G_SRCS	= gold.c
-G_OBJS	= $(G_SRCS:%.c=%.o)
-
-all:	silver gold
-
-silver: $(NAME)
-
-gold:	$(NAME2)
-
-$(NAME): $(OBJS) $(S_OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(S_OBJS) -o $(NAME)
-
-$(NAME2): $(OBJS) $(G_OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(G_OBJS) -o $(NAME2)
+all: $(NAME)
 
 %.o : %.c
-	$(CC) -c $(CFGLAGS) $@ $^
+	$(CC) -c $(CFLAGS) -o $@ $^
+
+$(NAME): $(OBJS)
+	$(CC) $(OBJS) -o $(NAME)
 
 clean:
-	$(RM) $(OBJS) $(S_OBJS) $(G_OBJS)
+	$(RM) $(OBJS)
 
 fclean: clean
-	$(RM) $(NAME) $(NAME2)
+	$(RM) $(NAME)
 
 re: fclean all
 
