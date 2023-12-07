@@ -5,7 +5,6 @@ int main(void)
 	FILE* 	file;
 	char* 	tmp;
 	char**	input;
-	char**	tmp2;
 	int 	size;
 
 	file = fopen("input.txt", "r");
@@ -19,8 +18,7 @@ int main(void)
 	if (input == NULL)
 		return (1);
 
-	tmp2 = input;
 	silver_day7(input);
-	// gold_day7(tmp2);
+	gold_day7(input);
 	fclose(file);
 }

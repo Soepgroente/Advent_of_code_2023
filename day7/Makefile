@@ -1,14 +1,16 @@
 NAME	= day7
 RM		= rm -rf
-CC		= gcc
+CC		= cc
 CFLAGS	= -Wall -Werror -Wextra
-#CFLAGS += -g3 -fsanitize=address
+CFLAGS += -g3 -fsanitize=address
 
 SRCS	=	adv_utils.c \
+			boolseye.c \
 			main.c \
 			ft_split.c \
 			gold.c \
-			silver.c \
+			new_silver.c \
+			sorting.c \
 
 OBJS	= $(SRCS:%.c=$(OBJDIR)/%.o)
 OBJDIR	= advent_objects
@@ -22,7 +24,7 @@ $(OBJDIR)/%.o : %.c
 	$(CC) -c $(CFLAGS) -o $@ $^
 
 $(NAME): $(OBJDIR) $(OBJS)
-	$(CC) $(OBJS) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
 
 clean:
 	$(RM) $(OBJDIR)

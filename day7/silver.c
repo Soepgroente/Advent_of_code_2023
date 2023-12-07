@@ -1,19 +1,21 @@
 #include "day7.h"
 
+int size;
+
 static int	convert_char(char c)
 {
 	if (isdigit(c) == true)
-		return (c - '0' + 100);
+		return (c - '0');
 	else if (c == 'T')
-		return (110);
+		return (10);
 	else if (c == 'J')
-		return (111);
+		return (11);
 	else if (c == 'Q')
-		return (112);
+		return (12);
 	else if (c == 'K')
-		return (113);
+		return (13);
 	else if (c == 'A')
-		return (114);
+		return (14);
 	else
 	{
 		puts("MISTAKE");
@@ -21,127 +23,138 @@ static int	convert_char(char c)
 	}
 }
 
-static uint64_t	assign_total(int cards[5], int rank)
+static uint64_t	determine_rank(int* cards)
 {
-	uint64_t hand_value = 0;
-	int i = 0;
-	uint64_t tmp = 0;
-
-	while (i < 4 && cards[i] == cards[i + 1])
-	{
-		hand_value += cards[i];
-	}
-	hand_value += cards[i];
-	hand_value *= rank;
-	if (rank == TWO_PAIR || rank == FULL_HOUSE)
-	{
-		while (i < 4 && cards[i] == cards[i + 1])
-		{
-			tmp += cards[i];
-		}
-		tmp += cards[i];
-		hand_value += tmp * rank / 5;
-	}
-	while (i < 5)
-		hand_value += cards[i];
-	return (hand_value);
-}
-
-static uint64_t	determine_rank(int* cards[5])
-{
-	int i; 
-	int tmp; 
-	int count = 0; 
-	int count2;
-	int value = 0;
-	bool edgecase = false;
+	int i = 0; int j = 0;
+	int tmp[5] = {0, 0, 0, 0, 0};
+	int count = 0;
+	int res[2] = {0, 0};
 
 	for (i = 0; i < 5; i++)
+		tmp[i] = cards[i];
+	for (i = 0; i < 5; i++)
 	{
-		count2 = 0;
-		tmp = cards[i];
-		for (int j = i + 1; j < 5; j++)
+		count = 0;
+		for (j = 0; j < 5; j++)
 		{
-			if (cards[j] == tmp)
-				count2++;
+			if (cards[i] == tmp[j])
+			{
+				count++;
+				tmp[j] = 0;
+			}
 		}
-		if (count2 > 0)
-			count = count2;
-		if (count == 1)
-			edgecase = true;
+		if (count > res[0])
+		{
+			res[1] = res[0];
+			res[0] = count;
+		}
+		else if (count > res[1])
+			res[1] = count;
 	}
-	if (count == 2 && edgecase == true)
-		return (FULL_HOUSE);
-	if (count == 0)
+	if (res[0] == 1)
 		return (HIGH_CARD);
-	if (count == 1)
-		return (ONE_PAIR);
-	if (count == 1 && edgecase == true)
+	if (res[0] == 2 && res[1] == 2)
 		return (TWO_PAIR);
-	if (count == 3)
+	if (res[0] == 2)
+		return (ONE_PAIR);
+	if (res[0] == 3 && res[1] == 2)
+		return (FULL_HOUSE);
+	if (res[0] == 3)
 		return (TRIPS);
-	if (count == 4)
+	if (res[0] == 4)
 		return (QUADS);
-	if (count == 5)
+	if (res[0] == 5)
 		return (YAHTZEE);
+	return (puts("ERROR"), 0);
 }
 
 static t_hand	assign_value(char* str)
 {
-	int*	ordered_hand;
-	int		rank;
 	t_hand 	hand;
 
 	for (int i = 0; i < 5; i++)
 		hand.cards[i] = convert_char(str[i]);
-	hand.multiplier = advtoi(&str[6]);
-	ordered_hand = sort_hand(hand.cards);
-	for (int i = 0; i < 5; i++)
-		hand.cards[i] = ordered_hand[i];
-	free(ordered_hand);
+	hand.multiplier = advtoi(&str[5]);
 	hand.rank = determine_rank(hand.cards);
-	hand.value = assign_total(hand.cards, rank);
 	return (hand);
 }
 
-static int find_highest(t_hand* list)
+static int find_highest(t_hand* list, t_rank rank)
 {
-	int highest = 0; int pos = 0;
+	int prev[5] = {0, 0, 0, 0, 0};
+	int pos = -1; int i = 0; int j;
 
-	for (int i = 0; i < 1000; i++)
+	while (i < size)
 	{
-		if (list[i].value > highest)
+		j = 0;
+		if (list[i].cards[0] >= prev[0] && list[i].rank == rank)
 		{
-			highest = list[i].value;
-			pos = i;
+			if (prev[0] == list[i].cards[0])
+			{
+				while (j < 5 && list[i].cards[j] == prev[j])
+					j++;
+				if (j < 5 && list[i].cards[j] > prev[j])
+				{
+					for (int x = 0; x < 5; x++)
+						prev[x] = list[i].cards[x];
+					pos = i;
+				}				
+			}
+			else
+			{
+				for (int x = 0; x < 5; x++)
+					prev[x] = list[i].cards[x];
+				pos = i;
+			}
 		}
+		i++;
 	}
+	if (pos == -1)
+		return (-1);
+	list[pos].rank = INVALID;
+	print_hand(list[pos].cards);
+	// printf("rank: %d\n", rank);
 	return (pos);
 }
 
-static uint64_t	sort_result(t_hand* list)
+static uint64_t	sort_result(t_hand* list, t_rank rank)
 {
-	t_hand* result;
+	uint64_t result = 0;
 	int pos;
+	int i = 0;
 
-	result = calloc(1000, sizeof(t_hand));
-	for (int i = 0; i < 1000; i++)
+	while (rank > 0)
 	{
-		pos = find_highest(list);
-		result[i].value = list[pos].value * list[pos].multiplier;
-		list[pos].value = 0;
+		while (1)
+		{
+			pos = find_highest(list, rank);
+			if (pos == -1)
+				break ;
+			result += (size - i) * list[pos].multiplier;
+			i++;
+		}
+		rank -= 1;
 	}
-	
+	return (result);
 }
 
 void	silver_day7(char** input)
 {
-	t_hand*	hands;
-	t_hand*	result;
+	t_hand*		hands;
+	uint64_t	result;
+	int i = 0;
 
-	hands = calloc(1000, sizeof(t_hand));
-	for (int i = 0; input[i] != NULL; i++)
+	while (input[i] != NULL)
+	{
+		i++;
+	}
+	size = i;
+	hands = calloc(size, sizeof(t_hand));
+	for (i = 0; input[i] != NULL; i++)
+	{
 		hands[i] = assign_value(input[i]);
-	result = sort_result(hands);
-	printf("Silver: %d\n", result);
+	}
+	result = sort_result(hands, YAHTZEE);
+	free(hands);
+	printf("Silver: %llu\n", result);
 }
