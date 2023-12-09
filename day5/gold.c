@@ -2,6 +2,15 @@
 
 static uint64_t	calc_next_location(t_map* map, uint64_t seed)
 {
+	static int x = 0; static int count = 0;
+
+	x++;
+	if (x % 1000000 == 0)
+	{
+		x = 0;
+		count++;
+		printf("%d mill\n", count);
+	}
 	while (map != NULL)
 	{
 		if (map->src <= seed && map->src + map->range > seed)

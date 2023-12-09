@@ -1,13 +1,21 @@
-#include "day5.h"
+#include "day9.h"
 
-int main(void)
+int main(int argc, char** argv)
 {
 	FILE* 	file;
 	char* 	tmp;
 	char**	input;
 	int 	size;
 
-	file = fopen("cheyinput.txt", "r");
+	if (argc > 2)
+	{
+		puts("too much arguing");
+		exit(EXIT_FAILURE);
+	}
+	if (argc == 2)
+		file = fopen(argv[1], "r");
+	else
+		file = fopen("input.txt", "r");
 	fseek(file, 0, SEEK_END);
 	size = ftell(file);
 	rewind(file);
@@ -18,6 +26,7 @@ int main(void)
 	if (input == NULL)
 		return (1);
 
-	silver_day5(input);
+	silver_day9(input);
+	gold_day9(input);
 	fclose(file);
 }
