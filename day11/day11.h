@@ -25,6 +25,6 @@ char		**ft_split(const char *s, char c);
 uint64_t	advtoi(char* str);
 int			count_array(char** array);
 void		print_2d(char** array);
-void		printeger_2d(int** array);
+void		printeger_2d(int** array, int xs, int ys);
 
 #endif

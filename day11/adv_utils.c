@@ -51,14 +51,16 @@ static void print_yx(int** array)
 	}
 }
 
-void	printeger_2d(int** array)
+void	printeger_2d(int** array, int xs, int ys)
 {
-	for (int x = 0; x < x_size; x++)
+	for (int x = 0; x < xs; x++)
 	{
-		for (int y = 0; y < y_size; y++)
+		for (int y = 0; y < ys; y++)
 		{
 			if (array[x][y] == 0)
 				printf(".");
+			else if (array[x][y] == -1)
+				printf("!");
 			else
 				printf("#");
 		}

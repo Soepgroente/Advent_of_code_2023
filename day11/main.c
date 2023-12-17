@@ -27,6 +27,6 @@ int main(int argc, char** argv)
 		return (1);
 
 	silver_day11(input);
-	// gold_day11(input);
+	gold_day11(input);
 	fclose(file);
 }

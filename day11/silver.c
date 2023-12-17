@@ -30,7 +30,7 @@ static int**	set_coordinates(int** map)
 static int**	create_map(char** input, int* empty_rows, int* empty_cols)
 {
 	int**	map;
-	int 	galaxy = 0;
+	int 	galaxy = 1;
 	int x = 0; int y = 0;
 
 	map = calloc(x_size, sizeof(int*));
@@ -64,7 +64,7 @@ static int**	create_map(char** input, int* empty_rows, int* empty_cols)
 				exit(EXIT_FAILURE);
 		}			
 	}
-	galaxies = galaxy;
+	galaxies = galaxy - 1;
 	return (map);
 }
 
@@ -106,9 +106,7 @@ void	silver_day11(char** input)
 	}
 	y_size += x;
 	map = create_map(input, empty_rows, empty_cols);
-	printeger_2d(map);
 	locs = set_coordinates(map);
-	printf("galaxies: %d\n", galaxies);
 	for (x = 0; x < galaxies - 1; x++)
 		for (int y = x + 1; y < galaxies; y++)
 			result += abs(locs[x][0] - locs[y][0]) + abs(locs[x][1] - locs[y][1]);
