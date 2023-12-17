@@ -1,4 +1,4 @@
-#include "day10.h"
+#include "day11.h"
 
 static int	ft_getamount(const char *s, char c)
 {

@@ -1,109 +1,116 @@
-#include "day10.h"
+#include "day11.h"
 
-int size;
+int x_size;
+int y_size;
+int galaxies;
 
-static t_map*	move_map(t_map* map, t_token* prev)
+static int**	set_coordinates(int** map)
 {
-	t_token	move;
-	t_token	options[4][6] = {
-		{BLOCKED, NORTH, BLOCKED, SOUTH, BLOCKED, EAST},
-		{NORTH, BLOCKED, SOUTH, BLOCKED, BLOCKED, WEST},
-		{BLOCKED, BLOCKED, EAST, WEST, NORTH, BLOCKED},
-		{EAST, WEST, BLOCKED, BLOCKED, SOUTH, BLOCKED}
-	};
-	move = options[*prev][map->symbol];
-	*prev = move;
-	if (move == NORTH)
-		map = map->up;
-	else if (move == SOUTH)
-		map = map->down;
-	else if (move == WEST)
-		map = map->pv;
-	else if (move == EAST)
-		map = map->nx;
-	else
+	int**	locs;
+	int 	i = 0;
+
+	locs = calloc(galaxies, sizeof(int*));
+	for (int z = 0; z < galaxies; z++)
+		locs[z] = calloc(2, sizeof(int));
+	for (int x = 0; x < x_size; x++)
 	{
-		puts("Whoops");
-		exit(EXIT_FAILURE);
+		for (int y = 0; y < y_size; y++)
+		{
+			if (map[x][y] != 0)
+			{
+				locs[i][0] = x;
+				locs[i][1] = y;
+				i++;
+			}
+		}
 	}
-	return (map);
+	return (locs);
 }
 
-static int	find_loop_length(t_map* map)
-{
-	int i = 1;
-	t_token prev;
-	
-	map = map->pv;
-	prev = WEST;
-	while (map->symbol != START)
-	{
-		map = move_map(map, &prev);
-		i++;
-	}
-	return (i);
-}
-
-static void	input_stars(char** input)
-{
-	
-}
-
-static int**	create_map(char** input)
+static int**	create_map(char** input, int* empty_rows, int* empty_cols)
 {
 	int**	map;
-	int 	galaxy = 1;
+	int 	galaxy = 0;
+	int x = 0; int y = 0;
 
-	size = count_array(input);
-	map = calloc(size, sizeof(int*));
+	map = calloc(x_size, sizeof(int*));
 	if (map == NULL)
 		exit(EXIT_FAILURE);
-	for (int i = 0; i < size; i++)
+	for (int i = 0; i < x_size; i++)
 	{
-		map[i] = calloc(size, sizeof(int));
-		for (int j = 0; j < size; j++)
+		y = 0;
+		map[i] = calloc(y_size, sizeof(int));
+		if (map[i] == NULL)
+			exit(EXIT_FAILURE);
+		for (int j = 0; j < y_size; j++)
 		{
-			if (input[i][j] == '#')
+			if (input[i - x][j - y] == '#')
 			{
 				map[i][j] = galaxy;
 				galaxy++;
 			}
+			if (empty_cols[y] == j - y)
+			{
+				y++;
+				j++;
+			}
 		}
+		if (empty_rows[x] == i - x)
+		{
+			x++;
+			i++;
+			map[i] = calloc(y_size, sizeof(int));
+			if (map[i] == NULL)
+				exit(EXIT_FAILURE);
+		}			
 	}
+	galaxies = galaxy;
+	return (map);
 }
 
-static void	empty_space(char** input, int* empty_rows, int* empty_cols)
+void	silver_day11(char** input)
 {
-
-}
-
-void	silver_day10(char** input)
-{
-	int result;
 	int**	map;
-	int	empty_rows[140];
-	int	empty_cols[140];
-	int x;
+	int 	size;
+	int*	empty_rows;
+	int*	empty_cols;
+	int x = 0;
+	int**	locs;
+	uint64_t	result = 0;
 
+	size = count_array(input);
+	x_size = size;
+	y_size = strlen(*input);
+	empty_rows = calloc(size, sizeof(int));
+	empty_cols = calloc(size, sizeof(int));
 	for (int i = 0; i < size; i++)
 	{
 		if (strchr(input[i], '#') == NULL)
 		{
 			empty_rows[x] = i;
+			x_size++;
 			x++;
 		}
 	}
 	x = 0;
-	for (int j = 0; j < size; j++)
+	for (int j = 0; j < y_size; j++)
 	{
+		empty_cols[x] = j;
 		for (int i = 0; i < size; i++)
 		{
-			if (input[i][j])
+			if (input[i][j] == '#')
+				empty_cols[x] = 0;
 		}
+		if (empty_cols[x] != 0)
+			x++;
 	}
-	map = create_map(input);
-	input_stars(map);
-
-	result = find_loop_length(map);
-	printf("Silver: %d\n", result / 2 + result % 2);
+	y_size += x;
+	map = create_map(input, empty_rows, empty_cols);
+	printeger_2d(map);
+	locs = set_coordinates(map);
+	printf("galaxies: %d\n", galaxies);
+	for (x = 0; x < galaxies - 1; x++)
+		for (int y = x + 1; y < galaxies; y++)
+			result += abs(locs[x][0] - locs[y][0]) + abs(locs[x][1] - locs[y][1]);
+	printf("Silver: %llu\n", result);
 }

@@ -1,12 +1,10 @@
-NAME	= day10
+NAME	= day11
 RM		= rm -rf
 CC		= cc
 CFLAGS	= -Wall -Werror -Wextra
 CFLAGS += -g3 -fsanitize=address
 
 SRCS	=	adv_utils.c \
-			boolies.c \
-			lists.c \
 			main.c \
 			ft_split.c \
 			silver.c \

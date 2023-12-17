@@ -1,4 +1,4 @@
-#include "day10.h"
+#include "day11.h"
 
 int main(int argc, char** argv)
 {
@@ -26,7 +26,7 @@ int main(int argc, char** argv)
 	if (input == NULL)
 		return (1);
 
-	silver_day10(input);
-	gold_day10(input);
+	silver_day11(input);
+	// gold_day11(input);
 	fclose(file);
 }
